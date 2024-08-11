@@ -10,9 +10,9 @@ class LoginScreen extends StatelessWidget {
         children: [
           // Background Gradient
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Colors.blueGrey[900]!, Colors.blueGrey[700]!],
+                colors: [Colors.black87, Colors.black54],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -21,129 +21,118 @@ class LoginScreen extends StatelessWidget {
           // Main content
           Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Logo
-                  SizedBox(
-                    height: 150,
-                    child: Image.asset(
-                        'assets/images/logo.png'), // Replace with your logo path
-                  ),
-                  const SizedBox(height: 40),
-                  // Title
-                  Text(
-                    'Welcome Back',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    'Please login to continue',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: Colors.white70,
-                        ),
-                  ),
-                  const SizedBox(height: 30),
-                  // Text Fields
-                  _buildTextField(
-                    context,
-                    label: 'Username',
-                    icon: Icons.person,
-                  ),
-                  const SizedBox(height: 20),
-                  _buildTextField(
-                    context,
-                    label: 'Password',
-                    icon: Icons.lock,
-                    obscureText: true,
-                  ),
-                  const SizedBox(height: 20),
-                  // Login Button
-                  ElevatedButton(
-                    onPressed: () {
-                      // Handle login action
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueGrey[800],
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                    maxWidth: 600), // Max width for larger screens
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Logo
+                    SizedBox(
+                      height: 120,
+                      child: Image.asset(
+                        'assets/images/logo.png',
+                        fit: BoxFit.contain,
                       ),
                     ),
-                    child: Text(
-                      'Login',
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
+                    const SizedBox(height: 40),
+                    // Title
+                    Text(
+                      'Welcome Back',
+                      style:
+                          Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  // Continue as Guest Button
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/');
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueGrey[800],
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Text(
-                      'Continue as Guest',
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  // Forgot Password
-                  TextButton(
-                    onPressed: () {
-                      // Handle forgot password action
-                    },
-                    child: Text(
-                      'Forgot Password?',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    const SizedBox(height: 12),
+                    Text(
+                      'Please login to continue',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             color: Colors.white70,
                           ),
                     ),
-                  ),
-                  const SizedBox(height: 30),
-                  // Sign Up Option
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Don\'t have an account?',
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: Colors.white70,
-                            ),
+                    const SizedBox(height: 40),
+                    // Text Fields
+                    _buildTextField(
+                      context,
+                      label: 'Username',
+                      icon: Icons.person,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildTextField(
+                      context,
+                      label: 'Password',
+                      icon: Icons.lock,
+                      obscureText: true,
+                    ),
+                    const SizedBox(height: 24),
+                    // Login Button
+                    _buildButton(
+                      context,
+                      label: 'Login',
+                      onPressed: () {
+                        // Handle login action
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    // Continue as Guest Button
+                    _buildButton(
+                      context,
+                      label: 'Continue as Guest',
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(context, '/');
+                      },
+                    ),
+                    const SizedBox(height: 24),
+                    // Forgot Password
+                    TextButton(
+                      onPressed: () {
+                        // Handle forgot password action
+                      },
+                      child: Text(
+                        'Forgot Password?',
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  color: Colors.white70,
+                                  decoration: TextDecoration.underline,
+                                ),
                       ),
-                      const SizedBox(width: 8),
-                      TextButton(
-                        onPressed: () {
-                          // Handle sign up action
-                        },
-                        child: Text(
-                          'Sign Up',
+                    ),
+                    const SizedBox(height: 40),
+                    // Sign Up Option
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Don\'t have an account?',
                           style:
-                              Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                    color: Colors.blueAccent,
-                                    fontWeight: FontWeight.bold,
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    color: Colors.white70,
                                   ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        const SizedBox(width: 8),
+                        TextButton(
+                          onPressed: () {
+                            // Handle sign up action
+                          },
+                          child: Text(
+                            'Sign Up',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                  color: Colors.blueAccent,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -160,12 +149,12 @@ class LoginScreen extends StatelessWidget {
   }) {
     return TextField(
       obscureText: obscureText,
-      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+      style: Theme.of(context).textTheme.titleMedium?.copyWith(
             color: Colors.white,
           ),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
+        labelStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
               color: Colors.white70,
             ),
         prefixIcon: Icon(
@@ -173,12 +162,42 @@ class LoginScreen extends StatelessWidget {
           color: Colors.white70,
         ),
         filled: true,
-        fillColor: Colors.blueGrey[700],
+        fillColor: Colors.blueGrey[800],
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      ),
+    );
+  }
+
+  Widget _buildButton(
+    BuildContext context, {
+    required String label,
+    required VoidCallback onPressed,
+  }) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blueGrey[900],
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          shadowColor: Colors.black45,
+          elevation: 5,
+        ),
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+        ),
       ),
     );
   }

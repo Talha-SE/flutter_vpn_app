@@ -9,10 +9,10 @@ class ConnectButton extends StatefulWidget {
   final Server? selectedServer;
 
   const ConnectButton({
-    super.key,
+    Key? key,
     required this.vpnService,
     this.selectedServer,
-  });
+  }) : super(key: key);
 
   @override
   _ConnectButtonState createState() => _ConnectButtonState();
@@ -28,8 +28,7 @@ class _ConnectButtonState extends State<ConnectButton>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: const Duration(
-          milliseconds: 2000), // Adjust duration for slower rotation
+      duration: const Duration(milliseconds: 1500), // Smoother rotation
       vsync: this,
     )..repeat(); // Continuously rotate
 
@@ -37,12 +36,12 @@ class _ConnectButtonState extends State<ConnectButton>
         widget.vpnService.connectionStatusStream.listen((status) {
       setState(() {
         _isConnecting = false;
+        if (status) {
+          _animationController.forward(); // Start rotation when connected
+        } else {
+          _animationController.reverse(); // Stop rotation when disconnected
+        }
       });
-      if (status) {
-        _animationController.forward(); // Start rotation when connected
-      } else {
-        _animationController.reverse(); // Stop rotation when disconnected
-      }
     });
   }
 
@@ -88,40 +87,41 @@ class _ConnectButtonState extends State<ConnectButton>
         } else if (!_isConnecting) {
           _connectToSelectedServer();
         }
-        setState(() {});
       },
       child: AnimatedBuilder(
         animation: _animationController,
         builder: (context, child) {
           return Transform.rotate(
-            angle: _animationController.value *
-                2 *
-                3.14, // Use the animation value for rotation
+            angle: _animationController.value * 2 * 3.14, // Full rotation
             child: Container(
-              width: 70,
-              height: 70,
+              width: 80,
+              height: 80,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: widget.vpnService.isConnected
-                    ? const Color.fromARGB(255, 255, 255, 255)
-                    : const Color.fromARGB(255, 255, 255, 255),
+                gradient: LinearGradient(
+                  colors: widget.vpnService.isConnected
+                      ? [Colors.green, Colors.lightGreen]
+                      : [Colors.red, Colors.orange],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: widget.vpnService.isConnected
-                        ? const Color.fromARGB(255, 56, 255, 49)
-                            .withOpacity(0.6)
-                        : const Color.fromARGB(255, 255, 99, 99)
-                            .withOpacity(0.6),
-                    spreadRadius: 7,
+                        ? Colors.green.withOpacity(0.5)
+                        : Colors.red.withOpacity(0.5),
+                    spreadRadius: 5,
                     blurRadius: 10,
-                    offset: const Offset(0, 0), // changes position of shadow
+                    offset: const Offset(0, 4), // Slight shadow offset
                   ),
                 ],
               ),
-              child: const Icon(
-                Ionicons.power,
-                color: Color.fromARGB(255, 0, 0, 0),
-                size: 50,
+              child: Center(
+                child: Icon(
+                  Ionicons.power,
+                  color: Colors.white,
+                  size: 40,
+                ),
               ),
             ),
           );

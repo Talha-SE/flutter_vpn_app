@@ -1,13 +1,13 @@
 import 'dart:async';
+import 'package:flutter/services.dart';
 import '../models/server.dart';
-import '../widgets/connection_timer.dart'; // Import your ConnectionTimer class
-import '../utils/speed_measurement.dart'; // Import your SpeedMeasurement class
 
 class VpnService {
+  static const MethodChannel _channel =
+      MethodChannel('com.example.vpn_app/vpn');
+
   bool _isConnected = false;
   Server? _currentServer;
-  final ConnectionTimer _connectionTimerService = ConnectionTimer();
-  final SpeedMeasurement _speedMeasurementService = SpeedMeasurement();
 
   final StreamController<Server?> _serverController =
       StreamController<Server?>.broadcast();
@@ -19,6 +19,9 @@ class VpnService {
       StreamController<double>.broadcast();
   final StreamController<double> _downloadSpeedController =
       StreamController<double>.broadcast();
+
+  Timer? _durationTimer;
+  int _connectionDuration = 0;
 
   bool get isConnected => _isConnected;
   Server? get currentServer => _currentServer;
@@ -36,55 +39,69 @@ class VpnService {
     }
 
     try {
-      // Simulate a connection attempt
-      bool connectionSuccessful = await _simulateConnection(server);
-      if (connectionSuccessful) {
-        _isConnected = true;
-        _currentServer = server;
-        _serverController.add(server); // Notify server change
-        _connectionStatusController.add(true); // Notify connection status
+      await _channel.invokeMethod('startVpn');
+      _isConnected = true;
+      _currentServer = server;
+      _serverController.add(server);
+      _connectionStatusController.add(true);
 
-        // Start services for connection timer and speed measurement
-        _connectionTimerService.start();
-        _speedMeasurementService.startMonitoring();
-
-        // Update streams for duration and speeds
-        _connectionTimerService.durationStream.listen((duration) {
-          _connectionDurationController.add(duration);
-        });
-
-        _speedMeasurementService.uploadSpeedStream.listen((speed) {
-          _uploadSpeedController.add(speed);
-        });
-
-        _speedMeasurementService.downloadSpeedStream.listen((speed) {
-          _downloadSpeedController.add(speed);
-        });
-      } else {
-        throw Exception('Failed to connect to server');
-      }
+      _startConnectionTimer();
+      _startSpeedMeasurement();
     } catch (e) {
-      _connectionStatusController.add(false); // Notify connection failure
+      _isConnected = false;
+      _currentServer = null;
+      _connectionStatusController.add(false);
       throw Exception('Failed to connect to server: $e');
     }
   }
 
   Future<void> disconnect() async {
-    // Simulate disconnection logic
-    _isConnected = false;
-    _currentServer = null;
-    _serverController.add(null); // Notify server change
-    _connectionStatusController.add(false); // Notify disconnection status
+    try {
+      await _channel.invokeMethod('stopVpn');
+      _isConnected = false;
+      _currentServer = null;
+      _serverController.add(null);
+      _connectionStatusController.add(false);
 
-    // Stop services for connection timer and speed measurement
-    _connectionTimerService.stop();
-    _speedMeasurementService.stopMonitoring();
+      _stopConnectionTimer();
+      _stopSpeedMeasurement();
+    } catch (e) {
+      throw Exception('Failed to disconnect: $e');
+    }
   }
 
-  Future<bool> _simulateConnection(Server server) async {
-    // Simulate a delay for connection establishment
-    await Future.delayed(const Duration(seconds: 2));
-    return true; // Simulate a successful connection
+  void _startConnectionTimer() {
+    _connectionDuration = 0;
+    _durationTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      _connectionDuration++;
+      _connectionDurationController.add(_connectionDuration);
+    });
+  }
+
+  void _stopConnectionTimer() {
+    _durationTimer?.cancel();
+    _connectionDuration = 0;
+    _connectionDurationController.add(_connectionDuration);
+  }
+
+  void _startSpeedMeasurement() {
+    Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!_isConnected) {
+        timer.cancel();
+        return;
+      }
+      _uploadSpeedController.add(_generateRandomSpeed());
+      _downloadSpeedController.add(_generateRandomSpeed());
+    });
+  }
+
+  void _stopSpeedMeasurement() {
+    _uploadSpeedController.add(0);
+    _downloadSpeedController.add(0);
+  }
+
+  double _generateRandomSpeed() {
+    return (DateTime.now().millisecondsSinceEpoch % 100).toDouble();
   }
 
   void dispose() {
@@ -93,7 +110,6 @@ class VpnService {
     _connectionDurationController.close();
     _uploadSpeedController.close();
     _downloadSpeedController.close();
-    _connectionTimerService.dispose();
-    _speedMeasurementService.dispose();
+    _durationTimer?.cancel();
   }
 }

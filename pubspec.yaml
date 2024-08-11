@@ -41,6 +41,12 @@ dependencies:
   ionicons: ^0.2.2
   font_awesome_flutter: ^10.7.0
   flag: ^7.0.0
+  fl_chart: ^0.68.0
+ 
+
+  
+
+
 
 dev_dependencies:
   flutter_test:

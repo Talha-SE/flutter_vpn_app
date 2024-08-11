@@ -46,8 +46,16 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Turbo Stream'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Colors.black,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(CupertinoIcons.info_circle),
+            onPressed: () {
+              // Navigate to information screen
+            },
+          ),
+        ],
       ),
       body: IndexedStack(
         index: _currentIndex,
@@ -82,8 +90,8 @@ class _HomeScreenState extends State<HomeScreen> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Theme.of(context).colorScheme.surface,
-            Theme.of(context).colorScheme.surface,
+            Colors.blueGrey.shade900,
+            Colors.black,
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -92,25 +100,37 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Stack(
         children: [
           Positioned(
-            top: 64,
-            left: 25,
+            top: 60,
+            left: 20,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Selected Server: ${_selectedServer?.countryLong ?? 'None'}',
-                  style: Theme.of(context).textTheme.titleLarge,
+                  'Selected Server:',
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      color: Colors.white, fontWeight: FontWeight.bold),
                 ),
                 Text(
+                  _selectedServer?.countryLong ?? 'None',
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineSmall!
+                      .copyWith(color: Colors.white),
+                ),
+                const SizedBox(height: 10),
+                Text(
                   'IP: ${_selectedServer?.ip ?? 'None'}',
-                  style: Theme.of(context).textTheme.titleMedium,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(color: Colors.grey[400]),
                 ),
                 const SizedBox(height: 20),
               ],
             ),
           ),
           Positioned(
-            top: 50,
+            top: 60,
             right: 20,
             child: ConnectButton(
               vpnService: _vpnService,
@@ -120,9 +140,9 @@ class _HomeScreenState extends State<HomeScreen> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              padding: const EdgeInsets.all(29.0),
+              padding: const EdgeInsets.all(20.0),
               margin: EdgeInsets.zero,
-              height: 450.0, // Set a specific height
+              height: 400.0, // Adjust height for visual balance
               width: double.infinity,
               decoration: BoxDecoration(
                 image: _selectedServer != null
@@ -140,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             'assets/flags/planet-earth-flag.png'), // Default image
                         fit: BoxFit.cover,
                         colorFilter: ColorFilter.mode(
-                            Colors.black.withOpacity(0.3),
+                            Colors.black.withOpacity(0.4),
                             BlendMode
                                 .darken), // Darken the image for gradient effect
                       ),
